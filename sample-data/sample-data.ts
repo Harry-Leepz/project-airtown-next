@@ -2,7 +2,7 @@ const sampleData = {
   products: [
     {
       name: "Air Jordan 1 Mid",
-      slug: "Air Jordan 1 Mid",
+      slug: "air-jordan-mid",
       category: "Men's Shoes",
       description:
         "Inspired by the original AJ1, this mid-top edition maintains the iconic look you love while choice colours and crisp leather give it a distinct identity.",
@@ -20,7 +20,7 @@ const sampleData = {
     },
     {
       name: "Air Jordan 1 Low",
-      slug: "Air Jordan 1 Low",
+      slug: "air-jordan-low",
       category: "Men's Shoes",
       description:
         "Inspired by the original AJ1, this mid-top edition maintains the iconic look you love while choice colours and crisp leather give it a distinct identity.",
@@ -38,7 +38,7 @@ const sampleData = {
     },
     {
       name: "Air Jordan 1 High",
-      slug: "Air Jordan 1 High",
+      slug: "air-jordan-high",
       category: "Men's Shoes",
       description:
         "Inspired by the original AJ1, this mid-top edition maintains the iconic look you love while choice colours and crisp leather give it a distinct identity.",
