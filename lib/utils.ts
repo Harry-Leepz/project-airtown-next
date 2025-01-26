@@ -14,3 +14,11 @@ export function createDelay(ms: number) {
 export function convertToJavaScriptObject<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
+
+// format number to two decimal places
+export function formatNumberWithDecimal(num: number): string {
+  const [integerValue, decimalValue] = num.toString().split(".");
+  return decimalValue
+    ? `${integerValue}.${decimalValue.padEnd(2, "0")}`
+    : `${integerValue}.00`;
+}
