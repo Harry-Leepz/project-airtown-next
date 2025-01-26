@@ -1,7 +1,9 @@
 import ProductCard from "./product-card";
 
+import { Product } from "@/types";
+
 type ProductListProps = {
-  data: any; // TODO: Define type
+  data: Product[];
   title?: string;
   limit?: number;
 };
@@ -15,7 +17,7 @@ export default function ProductList({ data, title, limit }: ProductListProps) {
       {data.length === 0 && <p>No products found</p>}
       {data.length > 0 && (
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-          {limitedData.map((product: any, index: number) => (
+          {limitedData.map((product: Product, index: number) => (
             <ProductCard key={index} product={product} />
           ))}
         </div>

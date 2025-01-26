@@ -4,8 +4,10 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ProductPrice from "./product-price";
 
+import { Product } from "@/types";
+
 type ProductCardProps = {
-  product: any;
+  product: Product;
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
