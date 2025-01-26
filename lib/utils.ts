@@ -9,3 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 export function createDelay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+// convert prisma object into regular JS object
+export function convertToJavaScriptObject<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value));
+}
