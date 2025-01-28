@@ -26,7 +26,7 @@ export default function ProductImages({ images }: ProductImagesProps) {
             key={index}
             onClick={() => setCurrentImageIndex(index)}
             className={cn(
-              "border mr-2 cursor-pointer hover:border-orange-500 rounded-lg",
+              "border-2 mr-2 cursor-pointer hover:border-orange-500 rounded-lg ",
               currentImageIndex === index && "border-orange-600"
             )}
           >
