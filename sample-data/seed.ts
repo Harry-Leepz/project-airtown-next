@@ -10,8 +10,8 @@ import sampleData from "./sample-data";
  *
  * Functionality:
  * - Establishes a connection to the database using the Prisma ORM.
- * - Clears existing data from the `product` table to avoid duplication or conflicts during the seeding process.
- * - Inserts sample data into the `product` table using the `createMany` method.
+ * - Clears existing data from the `product and user` tables to avoid duplication or conflicts during the seeding process.
+ * - Inserts sample data into the `product and user` table using the `createMany` method.
  * - Logs a success message upon successful seeding.
  */
 
@@ -19,8 +19,13 @@ async function seed() {
   const prisma = new PrismaClient();
 
   await prisma.product.deleteMany();
+  await prisma.account.deleteMany();
+  await prisma.session.deleteMany();
+  await prisma.verificationToken.deleteMany();
+  await prisma.user.deleteMany();
 
   await prisma.product.createMany({ data: sampleData.products });
+  await prisma.user.createMany({ data: sampleData.users });
 
   console.log("Database seeded successfully");
 }
