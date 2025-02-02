@@ -21,3 +21,9 @@ export const insertProductSchema = z.object({
   banner: z.string().nullable(),
   price: priceValidation,
 });
+
+// schema for logging users in
+export const logInFormSchema = z.object({
+  email: z.string().email("Invalid e-mail address"),
+  password: z.string().min(8, "Password must be atleast 8 characters"),
+});
