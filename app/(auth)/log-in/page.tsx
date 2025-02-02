@@ -1,3 +1,4 @@
+import LogInForm from "@/components/shared/log-in";
 import {
   Card,
   CardContent,
@@ -21,7 +22,7 @@ export default function LogIn() {
         </CardHeader>
 
         <CardContent className='space-y-4'>
-          {/* Log In Form goes here */}
+          <LogInForm />
         </CardContent>
       </Card>
     </div>
