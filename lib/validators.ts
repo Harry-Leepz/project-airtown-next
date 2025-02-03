@@ -25,5 +25,5 @@ export const insertProductSchema = z.object({
 // schema for logging users in
 export const logInFormSchema = z.object({
   email: z.string().email("Invalid e-mail address"),
-  password: z.string().min(8, "Password must be atleast 8 characters"),
+  password: z.string().min(6, "Password must be atleast 6 characters"),
 });
