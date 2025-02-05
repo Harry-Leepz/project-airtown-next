@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,8 @@ export default function LogInForm() {
     success: false,
     message: "",
   });
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const LogInButton = () => {
     const { pending } = useFormStatus();
@@ -29,6 +32,7 @@ export default function LogInForm() {
 
   return (
     <form action={action}>
+      <input type='hidden' name='callbackUrl' value={callbackUrl} />
       <div className='space-y-6'>
         <div>
           <Label htmlFor='email'>Email</Label>
