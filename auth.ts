@@ -70,11 +70,14 @@ export const config = {
     }),
   ],
   callbacks: {
-    async session({ session, user, trigger, token }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, user, trigger, token }: any) {
       // set user id from token
-      if (token.sub) {
-        session.user.id = token.sub;
-      }
+      session.user.id = token.sub;
+      session.user.role = token.role;
+      session.user.name = token.name;
+
+      console.log(token);
 
       // check for any updates and update user name
       if (trigger === "update") {
@@ -82,6 +85,26 @@ export const config = {
       }
 
       return session;
+    },
+    async jwt({ token, user }) {
+      // add the user role to jwt
+      if (user && "role" in user) {
+        token.role = user.role;
+
+        // update user name from email
+        if (user.name === "NO_NAME") {
+          if (user.email) {
+            token.name = user.email.split("@")[0];
+
+            // db update
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { name: token.name },
+            });
+          }
+        }
+      }
+      return token;
     },
   },
 } satisfies NextAuthConfig;
