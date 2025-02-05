@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { EllipsisVertical, ShoppingCart, UserIcon } from "lucide-react";
+import { EllipsisVertical, ShoppingCart } from "lucide-react";
 
 import ThemeToggle from "./theme-toggle";
 import {
@@ -11,6 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import UserAccountButton from "./user-account-button";
 
 export default function Menu() {
   return (
@@ -22,11 +23,7 @@ export default function Menu() {
             <ShoppingCart />
           </Link>
         </Button>
-        <Button asChild variant='ghost'>
-          <Link href='/log-in'>
-            <UserIcon />
-          </Link>
-        </Button>
+        <UserAccountButton />
       </nav>
 
       {/* shadcn sheet menu */}
@@ -43,11 +40,7 @@ export default function Menu() {
                 <ShoppingCart /> Shopping Bag
               </Link>
             </Button>
-            <Button asChild>
-              <Link href='/log-in'>
-                <UserIcon /> Log In
-              </Link>
-            </Button>
+            <UserAccountButton />
             <SheetDescription />
           </SheetContent>
         </Sheet>
