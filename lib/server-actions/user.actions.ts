@@ -1,8 +1,10 @@
 "use server";
 
-import { logInFormSchema } from "../validators";
+import { logInFormSchema, signUpFormSchema } from "../validators";
 import { signIn, signOut } from "@/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { hashSync } from "bcrypt-ts-edge";
+import { prisma } from "@/sample-data/prisma";
 
 /*
  * Authentication Actions:
@@ -19,6 +21,15 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
  * - `logOutUser`: Handles user logout by calling `signOut()`.
  *   - Ends the user session and logs them out.
  *   - Does not return any data.
+ *
+ *  - `signUpUser`: Handles user registration and authentication.
+ *   - Validates form data using `signUpFormSchema`.
+ *   - Hashes the user's password before storing it securely in the database.
+ *   - Creates a new user record in the database using Prisma.
+ *   - Automatically logs in the newly registered user via `signIn("credentials")`.
+ *   - Returns a success message if registration is successful.
+ *   - If registration fails, an error message is returned.
+ *   - Redirect errors are handled explicitly.
  *
  * Usage:
  * These functions are intended to be used in a server-side environment with Next.js authentication flows.
@@ -56,4 +67,45 @@ export async function logInWithCredentials(
 // log out user
 export async function logOutUser() {
   await signOut();
+}
+
+// user accoung sign up
+export async function signUpUser(previousState: unknown, formData: FormData) {
+  try {
+    const user = signUpFormSchema.parse({
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+      name: formData.get("name"),
+    });
+
+    user.password = hashSync(user.password, 10);
+
+    await prisma.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      },
+    });
+
+    await signIn("credentials", {
+      email: user.email,
+      password: formData.get("password"),
+    });
+
+    return {
+      success: true,
+      message: "User registered successfully",
+    };
+  } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    return {
+      success: false,
+      message: "User was not registered",
+    };
+  }
 }
