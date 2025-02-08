@@ -58,7 +58,7 @@ export const insertShoppingBagSchema = z.object({
   itemsPrice: priceValidation,
   totalPrice: priceValidation,
   shippingPrice: priceValidation,
-  texPrice: priceValidation,
+  taxPrice: priceValidation,
   sessionBagId: z.string().min(1, "Session Bag id is required"),
   userId: z.string().optional().nullable(),
 });
