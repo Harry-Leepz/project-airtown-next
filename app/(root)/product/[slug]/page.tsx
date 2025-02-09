@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/server-actions/product.actions";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import ProductPrice from "@/components/shared/products/product-price";
 import ProductImages from "@/components/shared/products/product-images";
+import AddToBag from "@/components/shared/products/add-to-bag";
 
 type ProductDetailsProps = {
   params: Promise<{ slug: string }>;
@@ -62,7 +62,16 @@ export default async function ProductDetails({ params }: ProductDetailsProps) {
                 </div>
                 {product.stock > 0 && (
                   <div className='mt-8'>
-                    <Button className='w-full'>+ Add to Bag</Button>
+                    <AddToBag
+                      item={{
+                        productId: product.id,
+                        name: product.name,
+                        slug: product.slug,
+                        price: product.price,
+                        quantity: 1,
+                        image: product.images[0],
+                      }}
+                    />
                   </div>
                 )}
               </CardContent>
