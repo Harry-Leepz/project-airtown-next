@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 
+import { NextResponse } from "next/server";
+
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/sample-data/prisma";
 
@@ -103,6 +105,30 @@ export const config = {
         }
       }
       return token;
+    },
+    authorized({ request }) {
+      // check for session shopping bag cookie
+      if (!request.cookies.get("sessionBagId")) {
+        // generate new session bag id cookie
+        const sessionBagId = crypto.randomUUID();
+
+        // clone request headers
+        const newRequestHeaders = new Headers(request.headers);
+
+        // create new response and add new headers
+        const response = NextResponse.next({
+          request: {
+            headers: newRequestHeaders,
+          },
+        });
+
+        // set newly generated sessionBagId in response cookies
+        response.cookies.set("sessionBagId", sessionBagId);
+
+        return response;
+      } else {
+        return true;
+      }
     },
   },
 } satisfies NextAuthConfig;
