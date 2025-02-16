@@ -174,9 +174,9 @@ export async function removeItemfromBag(productId: string) {
 
     // quantity check
     if (itemFoundInBag.quantity === 1) {
-      (userShoppingBag.items as ShoppingBagItem[]).filter(
-        (item) => item.productId !== itemFoundInBag.productId
-      );
+      userShoppingBag.items = (
+        userShoppingBag.items as ShoppingBagItem[]
+      ).filter((item) => item.productId !== itemFoundInBag.productId);
     } else {
       (userShoppingBag.items as ShoppingBagItem[]).find(
         (item) => item.productId === itemFoundInBag.productId
