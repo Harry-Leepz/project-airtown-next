@@ -2,10 +2,13 @@
 
 import { cookies } from "next/headers";
 
-import { formatError } from "../utils";
+import { convertToJavaScriptObject, formatError } from "../utils";
 
-import { ShoppingBagItem } from "@/types";
 import { auth } from "@/auth";
+import { prisma } from "@/sample-data/prisma";
+
+import { shoppingBagItemSchema } from "../validators";
+import { ShoppingBagItem } from "@/types";
 
 export async function addItemToBag(data: ShoppingBagItem) {
   try {
@@ -16,12 +19,23 @@ export async function addItemToBag(data: ShoppingBagItem) {
 
     // session and user id
     const session = await auth();
-    const userId = session?.user?.id ? session.user.id : undefined;
+    const userId = session?.user?.id ? (session.user.id as string) : undefined;
+
+    // get user shopping bag
+    const userShoppingBag = await getUserBag();
+
+    // parse and validate item being added to shopping bag is a valid product
+    const item = shoppingBagItemSchema.parse(data);
+    const product = await prisma.product.findFirst({
+      where: { id: item.productId },
+    });
 
     // FOR TESTING ONLY -- NEEDS TO BE REMOVED
     console.log({
       "session bag id": sessionBagId,
       "user id ": userId,
+      "item being added to cart": item,
+      "product found": product,
     });
 
     return {
@@ -34,4 +48,29 @@ export async function addItemToBag(data: ShoppingBagItem) {
       message: formatError(error),
     };
   }
+}
+
+export async function getUserBag() {
+  const sessionBagId = (await cookies()).get("sessionBagId")?.value;
+  if (!sessionBagId) throw new Error("Bag Session Not found");
+
+  const session = await auth();
+  const userId = session?.user?.id ? (session.user.id as string) : undefined;
+
+  const shoppingBag = await prisma.shoppingBag.findFirst({
+    where: userId ? { userId: userId } : { sessionBagId: sessionBagId },
+  });
+
+  if (!shoppingBag) {
+    return undefined;
+  }
+
+  return convertToJavaScriptObject({
+    ...shoppingBag,
+    items: shoppingBag.items as ShoppingBagItem[],
+    itemsPrice: shoppingBag.itemsPrice.toString(),
+    taxPrice: shoppingBag.taxPrice.toString(),
+    shippingPrice: shoppingBag.shippingPrice.toString(),
+    totalPrice: shoppingBag.totalPrice.toString(),
+  });
 }
