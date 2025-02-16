@@ -14,6 +14,7 @@ import { prisma } from "@/sample-data/prisma";
 
 import { insertShoppingBagSchema, shoppingBagItemSchema } from "../validators";
 import { ShoppingBagItem } from "@/types";
+import { Prisma } from "@prisma/client";
 
 const calculatePrice = (items: ShoppingBagItem[]) => {
   const priceOfItems = roundNumToTwoDp(
@@ -75,6 +76,47 @@ export async function addItemToBag(data: ShoppingBagItem) {
         message: `${product.name} added to bag`,
       };
     } else {
+      // check if item already exists in user shopping bag
+      const itemAlreadyInBag = (
+        userShoppingBag.items as ShoppingBagItem[]
+      ).find((product) => product.productId === item.productId);
+
+      if (itemAlreadyInBag) {
+        // stock check
+        if (product.stock < itemAlreadyInBag.quantity + 1) {
+          throw new Error("Not enough stock");
+        }
+
+        // increase quantity
+        (userShoppingBag.items as ShoppingBagItem[]).find(
+          (product) => product.productId === item.productId
+        )!.quantity = itemAlreadyInBag.quantity + 1;
+      } else {
+        // if item does not exist in user shopping bag
+
+        // stock check
+        if (product.stock < 1) throw new Error("Not enough stock");
+
+        // add item to users existing shopping bag
+        userShoppingBag.items.push(item);
+      }
+
+      await prisma.shoppingBag.update({
+        where: { id: userShoppingBag.id },
+        data: {
+          items: userShoppingBag.items as Prisma.ShoppingBagUpdateitemsInput[],
+          ...calculatePrice(userShoppingBag.items as ShoppingBagItem[]),
+        },
+      });
+
+      revalidatePath(`/product/${product.slug}`);
+
+      return {
+        success: true,
+        message: `${product.name} ${
+          itemAlreadyInBag ? "updated in" : "added to"
+        } bag`,
+      };
     }
   } catch (error) {
     return {
