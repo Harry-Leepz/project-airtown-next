@@ -23,6 +23,17 @@ export function formatNumberWithDecimal(num: number): string {
     : `${integerValue}.00`;
 }
 
+// round a value to 2 decimal places
+export function roundNumToTwoDp(value: number | string): number {
+  if (typeof value === "number") {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
+  } else if (typeof value === "string") {
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+  } else {
+    throw new Error("The value is not a number or a string");
+  }
+}
+
 // handle errors relating to zod and prisma to improve error messaging
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatError(error: any) {
