@@ -32,7 +32,7 @@ export default function AddToBag({ item }: AddToBagProps) {
     }
 
     toast({
-      description: `${item.name} added to bag`,
+      description: response.message,
       action: (
         <ToastAction
           className='bg-gray-700 text-white hover:bg-gray-800'
