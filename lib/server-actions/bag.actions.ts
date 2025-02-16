@@ -1,14 +1,35 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
-import { convertToJavaScriptObject, formatError } from "../utils";
+import {
+  convertToJavaScriptObject,
+  formatError,
+  roundNumToTwoDp,
+} from "../utils";
 
 import { auth } from "@/auth";
 import { prisma } from "@/sample-data/prisma";
 
-import { shoppingBagItemSchema } from "../validators";
+import { insertShoppingBagSchema, shoppingBagItemSchema } from "../validators";
 import { ShoppingBagItem } from "@/types";
+
+const calculatePrice = (items: ShoppingBagItem[]) => {
+  const priceOfItems = roundNumToTwoDp(
+    items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0)
+  );
+  const shippingPrice = roundNumToTwoDp(priceOfItems > 100 ? 0 : 10);
+  const taxPrice = roundNumToTwoDp(priceOfItems * 0.15);
+  const totalPrice = roundNumToTwoDp(priceOfItems + taxPrice + shippingPrice);
+
+  return {
+    itemsPrice: priceOfItems.toFixed(2),
+    shippingPrice: shippingPrice.toFixed(2),
+    taxPrice: taxPrice.toFixed(2),
+    totalPrice: totalPrice.toFixed(2),
+  };
+};
 
 export async function addItemToBag(data: ShoppingBagItem) {
   try {
@@ -30,18 +51,31 @@ export async function addItemToBag(data: ShoppingBagItem) {
       where: { id: item.productId },
     });
 
-    // FOR TESTING ONLY -- NEEDS TO BE REMOVED
-    console.log({
-      "session bag id": sessionBagId,
-      "user id ": userId,
-      "item being added to cart": item,
-      "product found": product,
-    });
+    if (!product) {
+      throw new Error("Product was not found");
+    }
 
-    return {
-      success: true,
-      message: "Item added to bag",
-    };
+    // check if user shopping bag exists, if not create one and add to database
+    if (!userShoppingBag) {
+      const createNewShoppingBag = insertShoppingBagSchema.parse({
+        userId: userId,
+        items: [item],
+        sessionBagId: sessionBagId,
+        ...calculatePrice([item]),
+      });
+
+      await prisma.shoppingBag.create({
+        data: createNewShoppingBag,
+      });
+
+      revalidatePath(`/product/${product.slug}`);
+
+      return {
+        success: true,
+        message: `${product.name} added to bag`,
+      };
+    } else {
+    }
   } catch (error) {
     return {
       success: false,
