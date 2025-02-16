@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { getProductBySlug } from "@/lib/server-actions/product.actions";
+import { getUserBag } from "@/lib/server-actions/bag.actions";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +17,8 @@ export default async function ProductDetails({ params }: ProductDetailsProps) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+
+  const userShoppingBag = await getUserBag();
 
   return (
     <>
@@ -61,8 +64,9 @@ export default async function ProductDetails({ params }: ProductDetailsProps) {
                   )}
                 </div>
                 {product.stock > 0 && (
-                  <div className='mt-8'>
+                  <div className='mt-8 text-center'>
                     <AddToBag
+                      bag={userShoppingBag}
                       item={{
                         productId: product.id,
                         name: product.name,
