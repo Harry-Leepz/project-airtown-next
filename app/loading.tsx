@@ -19,6 +19,7 @@ export default function Loading() {
         height={50}
         width={50}
         priority
+        unoptimized
       />
     </div>
   );
