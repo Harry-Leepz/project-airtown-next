@@ -57,3 +57,22 @@ export function formatError(error: any) {
       : JSON.stringify(error.message);
   }
 }
+
+// Define a function formatCurrency that takes an amount as input
+// The amount can be of type number, string, or null
+// The function returns a formatted currency string or "NaN" if the input is null
+const CURRENCY_FORMATTER = Intl.NumberFormat("en-US", {
+  currency: "GBP",
+  style: "currency",
+  minimumFractionDigits: 2,
+});
+
+export function formatCurrency(amount: number | string | null) {
+  if (typeof amount === "number") {
+    return CURRENCY_FORMATTER.format(amount);
+  } else if (typeof amount === "string") {
+    return CURRENCY_FORMATTER.format(Number(amount));
+  } else {
+    return "NaN";
+  }
+}
