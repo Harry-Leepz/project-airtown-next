@@ -17,14 +17,16 @@ import {
   TableHead,
   TableHeader,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 import {
   addItemToBag,
   removeItemfromBag,
 } from "@/lib/server-actions/bag.actions";
+import { formatCurrency } from "@/lib/utils";
 
 import { ShoppingBag } from "@/types";
-import { Button } from "@/components/ui/button";
 
 type BagTableProps = {
   bag?: ShoppingBag;
@@ -131,6 +133,33 @@ export default function BagTable({ bag }: BagTableProps) {
               </TableBody>
             </Table>
           </div>
+
+          <Card>
+            <CardContent className='p-4 gap-4'>
+              <div className='pb-3 text-xl'>
+                Subtotal (
+                {bag.items.reduce((acc, current) => acc + current.quantity, 0)})
+                <span className='font-bold'>
+                  {": "}
+                  {formatCurrency(bag.itemsPrice)}{" "}
+                </span>
+              </div>
+              <Button
+                className='w-full'
+                disabled={isPending}
+                onClick={() =>
+                  startTransition(() => router.push("/shipping-address"))
+                }
+              >
+                {isPending ? (
+                  <Loader className='w-4 h-4 animate-spin' />
+                ) : (
+                  <ArrowRight className='h-4 w-4' />
+                )}{" "}
+                Proceed to checkout
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       )}
     </>
