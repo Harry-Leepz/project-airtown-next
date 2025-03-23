@@ -8,3 +8,11 @@ export const SERVER_URL =
 
 export const LATEST_PRODUCT_LIMIT =
   Number(process.env.LATEST_PRODUCT_LIMIT) || 4;
+
+export const SHIPPING_ADDRESS_FORM_DEFAULTS = {
+  fullName: "Jane Smith",
+  streetAddress: "21 Bedford Road",
+  townOrCity: "Bedford",
+  postalCode: "MK1 5JS",
+  country: "England",
+};
