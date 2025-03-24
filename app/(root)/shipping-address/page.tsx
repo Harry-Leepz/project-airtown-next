@@ -5,9 +5,9 @@ import { auth } from "@/auth";
 import { getUserById } from "@/lib/server-actions/user.actions";
 import { getUserBag } from "@/lib/server-actions/bag.actions";
 
-import { ShippingAddress } from "@/types";
+import ShippingAddressForm from "@/components/shared/shipping-address/shipping-address-form";
 
-import { SHIPPING_ADDRESS_FORM_DEFAULTS } from "@/lib/constants";
+import { ShippingAddress } from "@/types";
 
 export default async function ShippingAdress() {
   // get user bag and check it is not empty
@@ -22,5 +22,9 @@ export default async function ShippingAdress() {
   // get user from database
   const user = await getUserById(userId);
 
-  return <div>page</div>;
+  return (
+    <div>
+      <ShippingAddressForm address={user.address as ShippingAddress} />
+    </div>
+  );
 }
