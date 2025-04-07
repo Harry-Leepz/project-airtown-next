@@ -6,6 +6,7 @@ import { getUserById } from "@/lib/server-actions/user.actions";
 import { getUserBag } from "@/lib/server-actions/bag.actions";
 
 import ShippingAddressForm from "@/components/shared/shipping-address/shipping-address-form";
+import CheckoutSteps from "@/components/shared/checkout/checkout-steps";
 
 import { ShippingAddress } from "@/types";
 
@@ -23,8 +24,9 @@ export default async function ShippingAdress() {
   const user = await getUserById(userId);
 
   return (
-    <div>
+    <>
+      <CheckoutSteps currentStep={1} />
       <ShippingAddressForm address={user.address as ShippingAddress} />
-    </div>
+    </>
   );
 }
