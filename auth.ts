@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import { cookies } from "next/headers";
 
 import { NextResponse } from "next/server";
 
@@ -86,9 +87,10 @@ export const config = {
 
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       // add the user role to jwt
       if (user && "role" in user) {
+        token.id = user.id;
         token.role = user.role;
 
         // update user name from email
@@ -101,6 +103,31 @@ export const config = {
               where: { id: user.id },
               data: { name: token.name },
             });
+          }
+        }
+
+        // persist the current shopping bag after the user logs in
+        if (trigger === "signIn" || trigger === "signUp") {
+          const cookiesObject = await cookies();
+          const sessionBagId = cookiesObject.get("sessionBagId")?.value;
+
+          if (sessionBagId) {
+            const sessionBag = await prisma.shoppingBag.findFirst({
+              where: { sessionBagId },
+            });
+
+            if (sessionBag) {
+              // delete any prior existsing shopping bag in db
+              await prisma.shoppingBag.deleteMany({
+                where: { userId: user.id },
+              });
+
+              // assign new shopping bag
+              await prisma.shoppingBag.update({
+                where: { id: sessionBag.id },
+                data: { userId: user.id },
+              });
+            }
           }
         }
       }
