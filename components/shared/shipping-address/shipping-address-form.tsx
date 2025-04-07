@@ -181,12 +181,8 @@ export default function ShippingAddressForm({
             </div>
             <div className='flex gap-2'>
               <Button type='submit' disabled={isPending}>
-                {isPending ? (
-                  <Loader className='w-4 h-4 animate-spin' />
-                ) : (
-                  <ArrowRight className='w-4 h-4' />
-                )}{" "}
-                Continue
+                {isPending ? <Loader className='w-4 h-4 animate-spin' /> : ""}{" "}
+                Continue <ArrowRight className='w-4 h-4' />
               </Button>
             </div>
           </form>
