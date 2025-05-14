@@ -6,7 +6,7 @@ import { getUserById } from "@/lib/server-actions/user.actions";
 import { getUserBag } from "@/lib/server-actions/bag.actions";
 
 import ShippingAddressForm from "@/components/shared/shipping-address/shipping-address-form";
-import CheckoutSteps from "@/components/shared/checkout/checkout-steps";
+import CheckoutSteps from "@/components/shared/checkout";
 
 import { ShippingAddress } from "@/types";
 
