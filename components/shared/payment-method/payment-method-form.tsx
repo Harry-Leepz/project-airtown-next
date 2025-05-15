@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 
 import { paymentMethodSchema } from "@/lib/validators";
 
-import CheckoutSteps from "../checkout";
 import { DEFAULT_PAYMENT_METHOD } from "@/lib/constants";
 
 type PaymentMethodFormProps = {
@@ -33,7 +32,6 @@ export default function PaymentMethodForm({
 
   return (
     <>
-      <CheckoutSteps currentStep={2} />
       payment-method-form
       {preferredPaymentMethod}
     </>

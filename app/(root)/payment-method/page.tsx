@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import PaymentMethodForm from "@/components/shared/payment-method/payment-method-form";
+import CheckoutSteps from "@/components/shared/checkout";
 
 import { getUserById } from "@/lib/server-actions/user.actions";
 
@@ -15,6 +16,7 @@ export default async function PaymentMethods() {
 
   return (
     <div>
+      <CheckoutSteps currentStep={2} />
       <PaymentMethodForm preferredPaymentMethod={user.paymentMethod} />
     </div>
   );
