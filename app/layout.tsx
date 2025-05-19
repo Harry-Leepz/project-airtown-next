@@ -13,7 +13,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: `${APP_NAME}`,
+  title: {
+    template: `%s | Project Airtown`,
+    default: APP_NAME,
+  },
   description: APP_DESCRIPTION,
   metadataBase: new URL(SERVER_URL),
 };
