@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import PlaceOrderForm from "@/components/shared/place-order-form";
 
 import { ShippingAddress } from "@/types";
 import { formatCurrency } from "@/lib/utils";
@@ -153,6 +154,7 @@ export default async function PlaceOrder() {
                   {formatCurrency(shoppingBag.totalPrice)}
                 </div>
               </div>
+              <PlaceOrderForm />
             </CardContent>
           </Card>
         </div>
