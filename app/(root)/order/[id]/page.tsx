@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getOrderById } from "@/lib/server-actions/order.actions";
+import OrderDetailsTable from "@/components/shared/order";
+import { ShippingAddress } from "@/types";
 
 // import { ShippingAddress } from "@/types";
 
@@ -17,5 +19,14 @@ export default async function OrderDetails(props: {
   const order = await getOrderById(id);
   if (!order) notFound();
 
-  return <div>order details page</div>;
+  return (
+    <div>
+      <OrderDetailsTable
+        order={{
+          ...order,
+          shippingAddress: order.shippingAddress as ShippingAddress,
+        }}
+      ></OrderDetailsTable>
+    </div>
+  );
 }
