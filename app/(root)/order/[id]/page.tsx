@@ -20,7 +20,7 @@ export default async function OrderDetails(props: {
   if (!order) notFound();
 
   return (
-    <div>
+    <div style={{ colorScheme: "none" }}>
       <OrderDetailsTable
         order={{
           ...order,
