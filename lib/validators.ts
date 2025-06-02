@@ -106,3 +106,11 @@ export const insertOrderItemSchema = z.object({
   image: z.string().min(1, "Image is required"),
   price: priceValidation,
 });
+
+// schema for payment results
+export const paymentResultSchema = z.object({
+  id: z.string(),
+  status: z.string(),
+  email_address: z.string(),
+  price_paid: z.string(),
+});
