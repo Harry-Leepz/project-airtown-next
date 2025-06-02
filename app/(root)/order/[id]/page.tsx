@@ -5,8 +5,6 @@ import { getOrderById } from "@/lib/server-actions/order.actions";
 import OrderDetailsTable from "@/components/shared/order";
 import { ShippingAddress } from "@/types";
 
-// import { ShippingAddress } from "@/types";
-
 export const metadata: Metadata = {
   title: "Order Details",
 };

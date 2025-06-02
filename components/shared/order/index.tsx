@@ -7,6 +7,7 @@ import {
   PayPalButtons,
   PayPalScriptProvider,
   usePayPalScriptReducer,
+  FUNDING,
 } from "@paypal/react-paypal-js";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,7 +54,7 @@ export default function OrderDetailsTable({
     paidAt,
     deliveredAt,
   } = order;
-  console.log(shippingAddress);
+
   const PrintLoadingState = () => {
     const [{ isPending, isRejected }] = usePayPalScriptReducer();
     let status = "";
@@ -198,6 +199,7 @@ export default function OrderDetailsTable({
                     <PayPalButtons
                       createOrder={handleCreatePaypalOrder}
                       onApprove={handleApprovePaypalOrder}
+                      fundingSource={FUNDING.PAYPAL}
                     />
                   </PayPalScriptProvider>
                 </div>
