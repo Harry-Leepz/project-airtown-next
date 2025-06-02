@@ -3,6 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js";
+import { useToast } from "@/hooks/use-toast";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -16,11 +23,22 @@ import {
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Order } from "@/types";
 
+import {
+  createPaypalOrder,
+  approvePaypalOrder,
+} from "@/lib/server-actions/order.actions";
+
 type OrderDeatilsTableProps = {
   order: Order;
+  paypalClientId: string;
 };
 
-export default function OrderDetailsTable({ order }: OrderDeatilsTableProps) {
+export default function OrderDetailsTable({
+  order,
+  paypalClientId,
+}: OrderDeatilsTableProps) {
+  const { toast } = useToast();
+
   const {
     shippingAddress,
     orderitem,
@@ -35,6 +53,43 @@ export default function OrderDetailsTable({ order }: OrderDeatilsTableProps) {
     paidAt,
     deliveredAt,
   } = order;
+  console.log(shippingAddress);
+  const PrintLoadingState = () => {
+    const [{ isPending, isRejected }] = usePayPalScriptReducer();
+    let status = "";
+
+    if (isPending) {
+      status = "Loading PayPal...";
+    } else if (isRejected) {
+      status = "PayPal failed to load.";
+    } else {
+      return null; // No loading state to show
+    }
+
+    return status;
+  };
+
+  const handleCreatePaypalOrder = async () => {
+    const response = await createPaypalOrder(order.id);
+    if (!response.success) {
+      toast({
+        description: response.message,
+        variant: "destructive",
+      });
+    }
+
+    return response.data;
+  };
+
+  const handleApprovePaypalOrder = async (data: { orderID: string }) => {
+    const response = await approvePaypalOrder(order.id, data);
+
+    toast({
+      description: response.message,
+      variant: response.success ? "default" : "destructive",
+    });
+  };
+
   return (
     <>
       <h1 className='py-4 text-2xl'>Order Confirmation: {formatId(id)}</h1>
@@ -133,6 +188,20 @@ export default function OrderDetailsTable({ order }: OrderDeatilsTableProps) {
                 <div className='font-bold'>Total</div>
                 <div className='font-bold'>{formatCurrency(totalPrice)}</div>
               </div>
+              {/* Paypal Payment */}
+              {!isPaid && paymentMethod === "PayPal" && (
+                <div>
+                  <PayPalScriptProvider
+                    options={{ clientId: paypalClientId, currency: "GBP" }}
+                  >
+                    <PrintLoadingState />
+                    <PayPalButtons
+                      createOrder={handleCreatePaypalOrder}
+                      onApprove={handleApprovePaypalOrder}
+                    />
+                  </PayPalScriptProvider>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
