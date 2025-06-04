@@ -14,6 +14,7 @@ import { prisma } from "@/sample-data/prisma";
 import { ShoppingBagItem, PaymentResult } from "@/types";
 
 import { paypal } from "../paypal";
+import { PAGE_SIZE } from "../constants";
 
 // create orders and create order items
 export async function createOrder() {
@@ -293,4 +294,43 @@ async function updateOrderToPaid({
   });
 
   if (!updatedOrder) throw new Error("Order not found after update");
+}
+
+// get user orders
+export async function getUserOrders({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number;
+  page: number;
+}) {
+  // session check
+  const session = await auth();
+  if (!session) throw new Error("User is not authenticated");
+
+  // user check
+  const userId = session?.user?.id;
+  if (!userId) throw new Error("User not found");
+
+  const data = await prisma.order.findMany({
+    where: {
+      userId: userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: limit,
+    skip: (page - 1) * limit,
+  });
+
+  const totalCount = await prisma.order.count({
+    where: {
+      userId: userId,
+    },
+  });
+
+  return {
+    data,
+    totalPages: Math.ceil(totalCount / limit),
+  };
 }
