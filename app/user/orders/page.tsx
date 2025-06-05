@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { getUserOrders } from "@/lib/server-actions/order.actions";
 
-import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -12,6 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Pagination from "@/components/shared/pagination";
+
+import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "My Orders",
@@ -71,6 +73,9 @@ export default async function Orders(props: {
             ))}
           </TableBody>
         </Table>
+        {orders.totalPages >= 1 && (
+          <Pagination page={Number(page) || 1} totalPages={orders.totalPages} />
+        )}
       </div>
     </div>
   );
