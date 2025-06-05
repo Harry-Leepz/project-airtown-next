@@ -48,8 +48,24 @@ export default async function UserAccountButton() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuItem className='p-0 mb-1'>
+            <Link
+              className='w-full h-10 flex items-center justify-center px-2 '
+              href='/user/profile'
+            >
+              Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem className='p-0 mb-1'>
+            <Link
+              className='w-full h-10 flex items-center justify-center px-2 '
+              href='/user/orders'
+            >
+              Order History
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem className='p-0 mb-1 mt-1'>
             <form action={logOutUser} className='w-full'>
-              <Button className='w-full py-4 px-2 h-4 ' variant='default'>
+              <Button className='w-full py-4 px-2 h-10 ' variant='default'>
                 Log Out
               </Button>
             </form>
