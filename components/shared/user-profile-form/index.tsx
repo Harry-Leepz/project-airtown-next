@@ -18,6 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { updateUserProfile } from "@/lib/server-actions/user.actions";
+
 export default function UserProfileForm() {
   const { data: session, update } = useSession();
 
@@ -31,8 +33,32 @@ export default function UserProfileForm() {
 
   const { toast } = useToast();
 
-  const handleOnSubmit = () => {
-    return;
+  const handleOnSubmit = async (
+    values: z.infer<typeof updateUserProfileSchema>
+  ) => {
+    const response = await updateUserProfile(values);
+
+    if (!response.success) {
+      return toast({
+        variant: "destructive",
+        description: response.message,
+      });
+    }
+
+    // Update session with new user data
+    const updateSession = {
+      ...session,
+      user: {
+        ...session?.user,
+        name: values.name,
+      },
+    };
+
+    await update(updateSession);
+
+    toast({
+      description: response.message,
+    });
   };
 
   return (
