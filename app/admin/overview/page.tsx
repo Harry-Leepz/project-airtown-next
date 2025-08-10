@@ -5,13 +5,22 @@ import { auth } from "@/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { getOrderSummary } from "@/lib/server-actions/order.actions";
-import { formatCurrency, formatNumber } from "@/lib/utils";
+import { formatCurrency, formatDateTime, formatNumber } from "@/lib/utils";
 import {
   BadgePoundSterling,
   Barcode,
   CreditCardIcon,
   Users,
 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -79,6 +88,52 @@ export default async function AdminOverview() {
             <div className='text-2xl font-bold'>
               {formatNumber(summary.productsCount)}
             </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-7'>
+        <Card className='col-span-4'>
+          <CardHeader>
+            <CardTitle className='text-sm font-medium'>Overview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Placeholder for sales chart */}
+            <p className='text-sm text-muted-foreground'>Chart Here</p>
+          </CardContent>
+        </Card>
+        <Card className='col-span-3'>
+          <CardHeader>
+            <CardTitle className='text-sm font-medium'>Recent Sales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>BUYER</TableHead>
+                  <TableHead>DATE</TableHead>
+                  <TableHead>TOTAL</TableHead>
+                  <TableHead>ACTIONS</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {summary.latestSales.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell>
+                      {order.user.name ? order.user.name : "Deleted User"}
+                    </TableCell>
+                    <TableCell>
+                      {formatDateTime(order.createdAt).dateOnly}
+                    </TableCell>
+                    <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
+                    <TableCell>
+                      <Link href={`/order/${order.id}`}>
+                        <span className='px-2'>Details</span>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
