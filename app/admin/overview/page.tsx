@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 import { auth } from "@/auth";
 
@@ -20,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
+import Charts from "@/components/shared/charts";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -92,13 +93,15 @@ export default async function AdminOverview() {
         </Card>
       </div>
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-7'>
+        {/* Overview and Recent Sales */}
         <Card className='col-span-4'>
           <CardHeader>
-            <CardTitle className='text-sm font-medium'>Overview</CardTitle>
+            <CardTitle className='text-sm font-medium'>
+              Sales Analytics
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Placeholder for sales chart */}
-            <p className='text-sm text-muted-foreground'>Chart Here</p>
+            <Charts data={{ salesData: summary.salesData }} />
           </CardContent>
         </Card>
         <Card className='col-span-3'>
@@ -109,10 +112,10 @@ export default async function AdminOverview() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>BUYER</TableHead>
-                  <TableHead>DATE</TableHead>
-                  <TableHead>TOTAL</TableHead>
-                  <TableHead>ACTIONS</TableHead>
+                  <TableHead>Buyer</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
