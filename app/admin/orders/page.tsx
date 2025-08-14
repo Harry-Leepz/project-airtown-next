@@ -1,9 +1,21 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 import { auth } from "@/auth";
 import { requireAdmin } from "@/lib/auth-guard";
-
 import { getAllOrders } from "@/lib/server-actions/order.actions";
+import { formatId, formatDateTime, formatCurrency } from "@/lib/utils";
+
+import Pagination from "@/components/shared/pagination";
+import {
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  Table,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Admin Orders",
@@ -24,11 +36,60 @@ export default async function AdminOrders(props: {
 
   const { data: orders, totalPages } = await getAllOrders({
     page: Number(page),
-    limit: 2,
   });
 
-  console.log("Orders:", orders);
-  console.log("Total Pages:", totalPages);
+  return (
+    <div className='space-y-2'>
+      <h2 className='h2-bold'>Orders</h2>
+      <div className='overflow-x-auto'>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Paid</TableHead>
+              <TableHead>Delivered</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
 
-  return <div>Admin Orders</div>;
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell>{formatId(order.id)}</TableCell>
+                <TableCell>
+                  {formatDateTime(order.createdAt).dateTime}
+                </TableCell>
+                <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
+                <TableCell>
+                  {order.isPaid && order.paidAt
+                    ? formatDateTime(order.paidAt).dateTime
+                    : "Not Paid"}
+                </TableCell>
+                <TableCell>
+                  {order.isDelivered && order.deliveredAt
+                    ? formatDateTime(order.deliveredAt).dateTime
+                    : "Not Delivered"}
+                </TableCell>
+                <TableCell>
+                  <Button asChild variant='outline' size='sm'>
+                    <Link
+                      href={`/order/${order.id}`}
+                      className='text-red-500 hover:underline font-medium'
+                    >
+                      Details
+                    </Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {totalPages > 1 && (
+          <Pagination page={Number(page) || 1} totalPages={totalPages} />
+        )}
+      </div>
+    </div>
+  );
 }
