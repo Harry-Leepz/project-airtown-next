@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { auth } from "@/auth";
 import { requireAdmin } from "@/lib/auth-guard";
-import { getAllOrders } from "@/lib/server-actions/order.actions";
+import { deleteOrder, getAllOrders } from "@/lib/server-actions/order.actions";
 import { formatId, formatDateTime, formatCurrency } from "@/lib/utils";
 
 import Pagination from "@/components/shared/pagination";
@@ -16,6 +16,7 @@ import {
   Table,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import DeleteDialogue from "@/components/shared/delete-dialogue";
 
 export const metadata: Metadata = {
   title: "Admin Orders",
@@ -72,15 +73,16 @@ export default async function AdminOrders(props: {
                     ? formatDateTime(order.deliveredAt).dateTime
                     : "Not Delivered"}
                 </TableCell>
-                <TableCell>
+                <TableCell className='flex items-center gap-2'>
                   <Button asChild variant='outline' size='sm'>
                     <Link
                       href={`/order/${order.id}`}
-                      className='text-red-500 hover:underline font-medium'
+                      className='hover:underline font-medium'
                     >
                       Details
                     </Link>
                   </Button>
+                  <DeleteDialogue id={order.id} action={deleteOrder} />
                 </TableCell>
               </TableRow>
             ))}
